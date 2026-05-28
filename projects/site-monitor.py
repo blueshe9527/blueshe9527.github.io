@@ -18,12 +18,16 @@ while True:  # 迴圈
             status_code = response.status_code  # 將抓取的資料錯誤碼設為變數status_code(狀態碼)
 
             if status_code == 200:
-              print(URL, current_time, "正常連線", "狀態碼", status_code)
+              message = f"{URL} {current_time} 正常連線 狀態碼 {status_code}\n"
 
             else:
-              print(URL, current_time, "異常連線", "狀態碼", status_code)
+              message =f"{URL} {current_time} 異常連線 狀態碼 {status_code}\n"
 
         except requests.exceptions.RequestException as error:  # 如果請求過程發生錯誤，就把錯誤內容存到 error
-              print(URL, current_time, "連線失敗", "錯誤原因:", error)  # 印出目前時間、連線失敗與錯誤原因
+              message =f"{URL} {current_time} 連線失敗 錯誤原因 {error}\n"  # 印出目前時間、連線失敗與錯誤原因
 
+        print(message)  # 將 message 顯示在畫面上
+
+        with open("monitor.log", "a", encoding="utf-8") as file:  # 開啟 monitor.log，使用追加模式寫入
+             file.write(message)  # 將 message 寫入 monitor.log
     time.sleep(60)
