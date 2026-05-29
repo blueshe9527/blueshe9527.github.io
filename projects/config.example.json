@@ -1,0 +1,10 @@
+{
+  "urls": [
+    "https://api.github.com",
+    "https://www.google.com",
+    "https://www.youtube.com"
+  ],
+  "interval": 60,
+  "timeout": 5,
+  "slow_threshold": 1
+}
