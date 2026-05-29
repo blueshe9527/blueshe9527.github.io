@@ -13,6 +13,9 @@
 - 使用 try / except 處理連線失敗，避免程式中斷
 - 將每次監控結果寫入 monitor.log 紀錄檔
 - 顯示每個網站的回應時間 response time
+- ```markdown
+- 使用 config.json 管理網址、檢查間隔、timeout 與慢速門檻
+- 每輪結束後輸出正常、慢速、錯誤統計摘要
 ## 使用技術
 
 - Python
@@ -61,3 +64,24 @@ python site-monitor.py
 - 加入設定檔管理監控網址
 - 記錄每個網站的回應時間
 - 製作簡單的網頁儀表板
+  
+## 設定檔
+本工具使用 `config.json` 管理監控設定。  
+請先建立 `config.json`，或將 `config.example.json` 複製成 `config.json` 後再執行。
+設定範例：
+```json
+{
+  "urls": [
+    "https://api.github.com",
+    "https://www.google.com",
+    "https://www.youtube.com"
+  ],
+  "interval": 60,
+  "timeout": 5,
+  "slow_threshold": 1
+}
+欄位說明：
+urls：要監控的網站清單
+interval：每幾秒檢查一次
+timeout：每個網站最多等待幾秒
+slow_threshold：超過幾秒算回應偏慢
