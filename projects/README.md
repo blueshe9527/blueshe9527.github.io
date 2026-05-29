@@ -13,7 +13,6 @@
 - 使用 try / except 處理連線失敗，避免程式中斷
 - 將每次監控結果寫入 monitor.log 紀錄檔
 - 顯示每個網站的回應時間 response time
-- ```markdown
 - 使用 config.json 管理網址、檢查間隔、timeout 與慢速門檻
 - 每輪結束後輸出正常、慢速、錯誤統計摘要
 ## 使用技術
