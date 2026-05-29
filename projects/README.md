@@ -12,6 +12,7 @@
 - 狀態碼不是 200 時顯示異常連線
 - 使用 try / except 處理連線失敗，避免程式中斷
 - 將每次監控結果寫入 monitor.log 紀錄檔
+- 顯示每個網站的回應時間 response time
 ## 使用技術
 
 - Python
@@ -20,7 +21,7 @@
 - time
 - HTTP status code
 - exception handling
-
+- response elapsed time
 ## 程式概念
 
 這個作品主要練習以下 Python 基礎：
