@@ -8,7 +8,7 @@ https://blueshe9527.github.io
 
 ## 目前作品
 
-- Python 多網站連線監控工具
+- 使用 Python requests 製作多網站連線監控工具，支援 config 設定、log 紀錄、回應時間統計與異常警告提示。
 
 ## 學習方向
 
