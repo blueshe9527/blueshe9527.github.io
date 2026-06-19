@@ -50,66 +50,15 @@
             padding: 2px 6px;
             border-radius: 4px;
         }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>blueshe9527 的技術作品集</h1>
-        <p>正在轉職 MIS / 資安 / Python 自動化方向，紀錄我的學習與作品。</p>
-    </header>
 
-    <main>
-        <section>
-            <h2>關於我</h2>
-            <p>
-                我曾經經營個人遊戲工作室 8 年，具備多台電腦管理、硬體組裝、
-                網路設定、多 IP 環境與問題排查經驗。目前正在加強 Python、
-                MIS、資安基礎與 AI 自動化能力。
-            </p>
-        </section>
+        .project {
+            border: 1px solid #ddd;
+            padding: 16px;
+            margin-bottom: 16px;
+            border-radius: 8px;
+            background: #ffffff;
+        }
 
-        <section>
-            <h2>學習方向</h2>
-            <span class="tag">Python</span>
-            <span class="tag">MIS</span>
-            <span class="tag">資安基礎</span>
-            <span class="tag">網路管理</span>
-            <span class="tag">AI 自動化</span>
-            <span class="tag">GitHub Pages</span>
-        </section>
-
-        <section>
-            <h2>作品集</h2>
-            <h3>Python 多網站連線監控工具</h3>
-            <p>
-                使用 <code>requests.get()</code> 定期檢查多個網站連線狀態，
-                顯示檢查時間、HTTP 狀態碼、回應時間與異常警告提示，
-                並將結果寫入 <code>monitor.log</code>。
-            </p>
-            <p>
-    <a href="projects/site-monitor.py">查看程式碼</a>
-    <a href="projects/">查看作品說明</a>            
-</p>
-        </section>
-
-        <section>
-            <h2>學習筆記</h2>
-            <ul>
-                <li><code>requests.get()</code>：向網站發送請求</li>
-                <li><code>response.status_code</code>：取得 HTTP 狀態碼</li>
-                <li><code>try / except</code>：處理連線錯誤</li>
-                <li><code>for</code> 迴圈：逐一檢查網站清單</li>
-                <li><code>while True</code>：讓監控程式持續執行</li>
-            </ul>
-        </section>
-
-        <section>
-            <h2>目前目標</h2>
-            <p>
-                建立可展示的 Python 自動化作品，並逐步補強 Windows 維運、
-                網路基礎、資安觀念與 GitHub 作品集。
-            </p>
-        </section>
-    </main>
-</body>
-</html>
+        .project h3 {
+            margin-top: 0;
+            color: #2c3e50
