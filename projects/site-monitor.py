@@ -9,111 +9,153 @@
 # 建立訊息分辨工具
 # 更新統計工具
 # 主程式
-import requests
-import json
+
+import os
 import time
+import json
+import argparse
+import requests
 from datetime import datetime
 
+def send_line_message(message):
+    token = os.getenv("LINE_CHANNEL_ACCESS_TOKEN")
+    user_id = os.getenv("LINE_USER_ID")
+    if not token or not user_id:
+        print("LINE_not_configured, skip sending message")
+        return False
+    url = "https://api.line.me/v2/bot/message/push"
+    headers = {"Authorization":f"Bearer {token}","Content-Type":"application/json"}
+    payload = {"to":user_id,"messages":[{"type":"text","text":message}]}
+    try:
+        response = requests.post(url, headers=headers, json=payload, timeout=10)
+        if response.status_code == 200:
+            print("LINE_send_successfully")
+            return True
+        else:
+            print("LINE_send_failed")
+            print(response.status_code)
+            print(response.text)
+            return False
+    except requests.exceptions.RequestException as error:
+        print("LINE_send_error")
+        print(error)
+        return False
+
+
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description = "參數控制器")
+    parser.add_argument("--once", action="store_true" , help="執行一次")
+    parser.add_argument("--interval", type=int , help="間隔幾秒")
+    parser.add_argument("--timeout", type=int, help="超時幾秒")
+    parser.add_argument("--slow-threshold", type=float, help="慢速臨界點")
+    return parser.parse_args()
 
 def get_current_time():
-    now = datetime.now()
-    current_time = now.strftime("%Y年-%m月-%d日 %H時:%M分:%S秒")
+    current_time = datetime.now().strftime('%Y年-%m月-%d日 %H時:%M分:%S秒')
     return current_time
 
-
-def check_website(URL, TIMEOUT, SLOW_THRESHOLD):
+def check_website(url, timeout, slow_threshold):
     try:
-        response = requests.get(URL, timeout=TIMEOUT)
-        response_time = round(response.elapsed.total_seconds(), 3)
+        response = requests.get(url, timeout=timeout)
         status_code = response.status_code
-        if response_time > SLOW_THRESHOLD:
-            response_status = "回應偏慢"
-
+        response_time = round(response.elapsed.total_seconds(), 3)
+        if response_time > slow_threshold:
+            response_speed = "回應偏慢"
         else:
-            response_status = "回應正常"
-
-        return status_code, response_time, response_status, None
+            response_speed = "回應正常"
+        if status_code == 200:
+            connection_status = "連線正常"
+        else:
+            connection_status = "異常連線"
+        return status_code, response_time, response_speed, connection_status, None
     except requests.exceptions.RequestException as error:
-        response_status = "無法連線"
-        return None, None, response_status, error
+        return None, None, "無法取得速度", "無法連線", error
 
-def normal_message(URL, current_time, response_time, response_status, status_code):
-    return f"{URL} {current_time} 回應時間 {response_time} 秒 {response_status} 正常連線 狀態碼 {status_code}\n"
-
-def abnormal_message(URL, current_time, response_time, response_status, status_code):
-    return f"{URL} {current_time} 回應時間 {response_time} 秒 {response_status} 異常連線 錯誤碼 {status_code}\n"
-
-def error_message(URL, current_time, error):
-    return f"{URL} {current_time} 無法連線 錯誤原因 {error}\n"
-
-def create_message(URL, current_time, response_time, response_status, status_code, error):
+def normal_message(url, current_time, response_time, response_speed, connection_status, status_code):
+    return f"{url} {current_time} 回應時間{response_time}秒 速度狀態{response_speed} 連線狀態{connection_status} 狀態碼{status_code}\n"
+def abnormal_message(url, current_time, response_time, response_speed, connection_status, status_code):
+    return f"{url} {current_time} 回應時間{response_time}秒 速度狀態{response_speed} 連線狀態{connection_status} 錯誤碼{status_code}\n"
+def error_message(url, current_time, error):
+    return f"{url} {current_time} 無法連線 錯誤原因 {error}\n"
+def create_message(url, current_time, response_time, response_speed, connection_status, status_code, error):
     if error is not None:
-        message = error_message(URL, current_time, error)
-        return message
-    elif status_code == 200:
-        message = normal_message(URL, current_time, response_time, response_status, status_code)
-        return message
-    else :
-        message = abnormal_message(URL, current_time, response_time, response_status, status_code)
-        return message
+        return error_message(url, current_time, error)
+    if status_code == 200:
+        return normal_message(url, current_time, response_time, response_speed, connection_status, status_code)
+    return abnormal_message(url, current_time, response_time, response_speed, connection_status, status_code)
 
-def load_config():
-    with open("config.json", "r", encoding ="utf-8") as file:
+def update_count(normal_count, slow_count, error_count, response_speed, status_code, error):
+    if error is not None:
+        error_count += 1
+    elif status_code != 200:
+        error_count +=1
+    elif response_speed == "回應偏慢":
+        slow_count +=1
+    else:
+        normal_count += 1
+    return normal_count, slow_count, error_count
+
+def config_log():
+    with open("config.json", "r", encoding="utf-8") as file:
         config = json.load(file)
         return config
 
 def write_log(message):
-    with open("monitor.log", "a", encoding ="utf-8") as file:
+    if not os.path.exists("logs"):
+        os.makedirs("logs")
+    filename = get_log_filename()
+    with open(filename, "a", encoding="utf-8") as file:
         file.write(message)
 
-def update_count(normal_count, slow_count, error_count, response_status, status_code, error):
-    if error is not None:
-        error_count += 1
-    else:
-        if response_status == "回應偏慢":
-            slow_count += 1
-        if status_code == 200:
-            normal_count += 1
-        else:
-            error_count += 1
-    return normal_count, slow_count, error_count
+def get_log_filename():
+    today = datetime.today().strftime('%Y年%m月%d日')
+    filename = f"logs/qq{today}.log"
+    return filename
 
-def alert_if_needed(URL, response_status, error): #警告 如果 需要 = 如果需要警告
+def alert_if_needed(url, current_time, response_time, response_speed, connection_status, status_code, error):
     if error is not None:
-        return f"警告 {URL} 連線失敗\n"
-    if response_status == "回應偏慢":
-        return f"警告 {URL} 回應偏慢\n"
+        return f"警告{url} {current_time} 無法連線 錯誤原因 {error}\n"
+    if status_code != 200:
+            return f"警告{url} {current_time} 回應時間{response_time}秒 連線狀態 {connection_status} 錯誤碼 {status_code}\n"
+    if response_speed == "回應偏慢":
+            return f"警告{url} {current_time} 回應時間{response_time}秒 連線狀態 {connection_status} 狀態碼 {status_code}\n"
     return ""
 
-config = load_config()
-URLS = config["urls"]
-TIMEOUT = config["timeout"]
-SLOW_THRESHOLD = config["slow_threshold"]
-INTERVAL = config["interval"]
 
+
+args = parse_args()
+config = config_log()
+URLS = config["urls"]
+INTERVAL = args.interval or config["interval"]
+TIMEOUT = args.timeout or config["timeout"]
+SLOW_THRESHOLD = args.slow_threshold or config["slow_threshold"]
 normal_count = 0
 slow_count = 0
 error_count = 0
 
 while True:
-    for URL in URLS:
+    for url in URLS:
         current_time = get_current_time()
-        status_code, response_time, response_status, error = check_website(URL, TIMEOUT, SLOW_THRESHOLD)
-        message = create_message(URL, current_time, response_time, response_status, status_code, error)
-        normal_count, slow_count, error_count = update_count(normal_count, slow_count, error_count, response_status, status_code, error)
+        status_code, response_time, response_speed, connection_status, error = check_website(url, TIMEOUT, SLOW_THRESHOLD)
+        message = create_message(url, current_time, response_time, response_speed, connection_status, status_code, error)
+        alert_message = alert_if_needed(url, current_time, response_time, response_speed, connection_status, status_code, error)
+        normal_count,slow_count,error_count = update_count(normal_count, slow_count, error_count, response_speed, status_code, error)
 
-        print(message, end="")
-        write_log(message)
-
-        alert_message = alert_if_needed(URL, response_status, error)
-        if alert_message != "":
-            write_log(alert_message)
+        if alert_message:
             print(alert_message, end="")
             write_log(alert_message)
+            send_line_message("發生錯誤")
+        else:
+            print(message, end="")
+            send_line_message("正常運作中")
+            write_log(message)
 
-    summary = f"正常{normal_count} 偏慢{slow_count} 錯誤{error_count}\n"
+
+    summary = f"普通{normal_count} 偏慢{slow_count} 錯誤{error_count}\n"
     print(summary, end="")
-
     write_log(summary)
+    if args.once:
+        break
     time.sleep(INTERVAL)
-
