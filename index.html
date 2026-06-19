@@ -61,4 +61,113 @@
 
         .project h3 {
             margin-top: 0;
-            color: #2c3e50
+            color: #2c3e50;
+        }
+
+        .project ul {
+            padding-left: 20px;
+        }
+
+        .project a {
+            display: inline-block;
+            margin-right: 12px;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .project a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>blueshe9527 的技術作品集</h1>
+        <p>正在轉職 MIS / 資安 / Python 自動化方向，紀錄我的學習與作品。</p>
+    </header>
+
+    <main>
+        <section>
+            <h2>關於我</h2>
+            <p>
+                我曾經經營個人遊戲工作室 8 年，具備多台電腦管理、硬體組裝、
+                網路設定、多 IP 環境與問題排查經驗。目前正在加強 Python、
+                MIS、資安基礎與 AI 自動化能力。
+            </p>
+        </section>
+
+        <section>
+            <h2>學習方向</h2>
+            <span class="tag">Python</span>
+            <span class="tag">MIS</span>
+            <span class="tag">資安基礎</span>
+            <span class="tag">網路管理</span>
+            <span class="tag">AI 自動化</span>
+            <span class="tag">GitHub Pages</span>
+        </section>
+
+        <section>
+            <h2>作品集</h2>
+
+            <div class="project">
+                <h3>Python 薪資報表自動產生工具</h3>
+                <p>
+                    這個練習使用 Python 讀取 employees.csv，計算員工薪資，
+                    並將正常資料與錯誤資料分開輸出成報表。
+                </p>
+                <ul>
+                    <li>使用 csv.DictReader / DictWriter 處理 CSV 資料</li>
+                    <li>自動產生 salary_report.csv、error_report.csv</li>
+                    <li>使用 try / except 處理工時或時薪錯誤</li>
+                    <li>產生 summary_report.txt 統計正常、錯誤筆數與總薪資</li>
+                </ul>
+                <p>
+                    <strong>學到的技能：</strong>CSV 處理、資料驗證、錯誤處理、檔案讀寫
+                </p>
+                <a href="projects/salary-report.py">查看程式碼</a>
+                <a href="projects/">查看作品說明</a>
+            </div>
+
+            <div class="project">
+                <h3>Python 網站狀態監控與 LINE 通知工具</h3>
+                <p>
+                    這個練習可以定期檢查網站是否正常連線，記錄狀態碼與回應時間，
+                    並在網站異常或回應偏慢時發送 LINE 通知。
+                </p>
+                <ul>
+                    <li>讀取 config.json 設定網站清單</li>
+                    <li>使用 requests 檢查網站狀態</li>
+                    <li>自動寫入每日 log 紀錄</li>
+                    <li>使用環境變數保護 LINE Token</li>
+                    <li>支援 argparse 參數控制，例如 once、interval、timeout</li>
+                </ul>
+                <p>
+                    <strong>學到的技能：</strong>網站監控、API 串接、Log 紀錄、環境變數、參數控制
+                </p>
+                <a href="projects/site-monitor.py">查看程式碼</a>
+                <a href="projects/">查看作品說明</a>
+            </div>
+        </section>
+
+        <section>
+            <h2>學習筆記</h2>
+            <ul>
+                <li><code>requests.get()</code>：向網站發送請求</li>
+                <li><code>response.status_code</code>：取得 HTTP 狀態碼</li>
+                <li><code>try / except</code>：處理連線錯誤</li>
+                <li><code>for</code> 迴圈：逐一檢查網站清單</li>
+                <li><code>while True</code>：讓監控程式持續執行</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>目前目標</h2>
+            <p>
+                建立可展示的 Python 自動化作品，並逐步補強 Windows 維運、
+                網路基礎、資安觀念與 GitHub 作品集。
+            </p>
+        </section>
+    </main>
+</body>
+</html>
